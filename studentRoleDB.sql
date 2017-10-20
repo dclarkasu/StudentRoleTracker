@@ -36,9 +36,9 @@ INSERT INTO `student` (`id`,`firstName`, `lastName`, `grade`) VALUES (1,'Lil Bob
 INSERT INTO `role` (`id`,`studentID`, `name`, `description`, `isCurrent`) VALUES
 (1,1, 'Hall Monitor','That dude', 1),
 (2,1, 'Room Setup','Whistle while you work', 0),
-(2,2, 'Room Setup','Whistle while you work', 1);
-(3,2, 'Cleaner','I clean, I clean', 0);
-(3,3, 'Cleaner','I clean, I clean', 1);
-(1,3, 'Hall Monitor','That dude', 0);
+(3,2, 'Room Setup','Whistle while you work', 1),
+(4,2, 'Cleaner','I clean, I clean', 0),
+(5,3, 'Cleaner','I clean, I clean', 1),
+(6,3, 'Hall Monitor','That dude', 0);
 
 COMMIT;
