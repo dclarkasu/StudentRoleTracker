@@ -1,0 +1,4 @@
+rootProject.name = 'StudentRoleTrackerREST'
+
+//Allows JPA project to be included in this Web Proj
+includeFlat 'JPAStudentRoleTracker'

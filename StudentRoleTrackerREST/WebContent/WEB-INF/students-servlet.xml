@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- Look here for files to build beans -->
+		<context:component-scan base-package="controllers"/>
+
+		<bean id="studentdao" class="data.StudentDAOImpl"/>
+		
+		<bean id="myEntityManagerFactory"
+			class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+			<property name="persistenceUnitName" value="RoleTracker" />
+			<!-- persistence makes connection to the DB. Value ^^ should match the value in JPAQuiz's persistence.xml -->
+		</bean>
+	
+		<bean id="myTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+			<property name="entityManagerFactory" ref="myEntityManagerFactory" />
+			<!-- property name must match persistence unit above -->
+		</bean>
+		
+		<!-- The bean id above must match the tx manager below -->
+		<tx:annotation-driven transaction-manager="myTransactionManager" />
+		
+		<mvc:annotation-driven/>
+
+</beans>

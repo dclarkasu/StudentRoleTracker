@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Role {
 	@Id
@@ -18,7 +20,8 @@ public class Role {
 	private String description;
 
 	private boolean isCurrent;
-
+	
+	@JsonBackReference(value="studentToRole")
 	@ManyToOne
 	@JoinColumn(name = "studentID")
 	private Student student;
