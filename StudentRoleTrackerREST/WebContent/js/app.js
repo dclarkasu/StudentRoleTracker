@@ -1,21 +1,22 @@
 $(document).ready(function(){
 	console.log("Loaded");
-	index();
+	jsGetController('', generateIndexTable);
 });
 
 //Index/Show all Students function
-var index = function(){
-	$.ajax({
-		type : 'GET',
-		url : 'rest/students',
-		dataType : 'json'
-	})
-	.done(generateIndexTable)
-	.fail(function(xhr, status , err){
-		console.error("Failed Index Request");
-		console.error(err);
-	})
-};
+// var index = function(){
+// 	$.ajax({
+// 		type : 'GET',
+// 		url : 'rest/students',
+// 		dataType : 'json'
+// 	})
+// 	.done(generateIndexTable)
+// 	.fail(function(xhr, status , err){
+// 		console.error("Failed Index Request");
+// 		console.error(err);
+// 	})
+// };
+
 //Creates table on index.html
 var generateIndexTable = function(data, status) {
 	console.log("test")
@@ -59,7 +60,7 @@ var viewBtnHandler = function(){
 //Handles Create New Student btn
 var createBtnHandler = function(){
 	console.log("Create Stud btn clicked");
-	jsGetController();
+	buildNewStudentForm();
 };
 
 var jsGetController = function(studentNum, callbackFunc) {
@@ -124,4 +125,41 @@ var deleteStudent = function(student) {
 var editRole = function(role) {
 	console.log("In edit role");
 	console.log(role);
+};
+
+var buildNewStudentForm = function() {
+	var $form = $('<form name="newStudentForm">');
+	$form.append($('<fieldset>'));
+	$form.append($('<legend>').text('Create Student'));
+
+	var $fNameInput = $('<input>'); //type text is default
+	$fNameInput.attr('name', 'fName');
+	$fNameInput.attr('placeholder', 'First Name');
+
+	var $lNameInput = $('<input>');
+	$lNameInput.attr('name', 'lName');
+	$lNameInput.attr('placeholder', 'Last Name');
+
+	var $grade = $('<input>');
+	$grade.attr('name', 'grade');
+	$grade.attr('placeholder', 'Grade');
+
+	var $submit = $('<input type="submit">');
+	$submit.val('Submit');
+	//Append everything to html
+	$submit.click(createNewStudent);
+	$form.append($fNameInput, $lNameInput, $grade, $submit);
+	$('#content').append($form);
+	$('#createStudentBtn').remove();
+};
+
+var createNewStudent = function(e){
+	e.preventDefault();
+	console.log("In createNewStudent");
+
+	var newStudent = {};
+	newStudent.firstName = $(newStudentForm.fName).val();
+	newStudent.lastName = $(newStudentForm.lName).val();
+	newStudent.grade = $(newStudentForm.grade).val();
+	console.log(newStudent);
 };
