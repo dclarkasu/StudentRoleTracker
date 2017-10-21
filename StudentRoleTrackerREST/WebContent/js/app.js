@@ -16,7 +16,7 @@ var index = function(){
 		console.error(err);
 	})
 };
-
+//Creates table on index.html
 var generateTable = function(data, status) {
 	console.log("test")
 	console.log(data);
@@ -33,12 +33,13 @@ var generateTable = function(data, status) {
 
 	data.forEach(function(student, idx){
 		var $tDataName = $('<td>').text(student.firstName + " " + student.lastName);
+		//Button Creation
 		var $tDataView = $('<button>');
 		$tDataView.text('View');
 		console.log(student.id)
-		console.log("test")
 		$tDataView.attr('id', student.id);
 		$tDataView.click(viewBtnHandler);
+		//Create table row
 		var $tRow = $('<tr>').append($tDataName, $tDataView);
 		$tBody.append($tRow);
 	});
@@ -49,10 +50,10 @@ var generateTable = function(data, status) {
 
 var viewBtnHandler = function(){
 	console.log("View clicked");
-	jsController(this.id, showStudent);
+	jsGetController(this.id, showStudent);
 };
 
-var jsController = function(studentNum, callbackFunc) {
+var jsGetController = function(studentNum, callbackFunc) {
 	console.log(studentNum)
 	$.ajax({
 		type : 'GET',
@@ -66,7 +67,34 @@ var jsController = function(studentNum, callbackFunc) {
 	})
 };
 
-var showStudent = function(data) {
+var showStudent = function(student) {
 	console.log("in showStudent");
-	console.log(data);
+	console.log(student);
+	$('#content').empty();
+
+	var $containerDiv = $('<div>').attr('id', 'containerDiv');
+	var $infoDiv = $('<div>').attr('id', 'infoDiv');
+	var $roleDiv = $('<div>').attr('id', 'roleDiv');
+
+	//Build $infoDiv
+	var $nameHeader = $('<h2>').text(student.firstName + " " + student.lastName)
+	var $grade = $('<h3>').text(student.grade);
+	$infoDiv.append($nameHeader, $grade);
+
+	//Build $roleDiv
+	var $roleListHeader = $('<h3>').text('Roles: ');
+	var $roleList = $('<ul>').append($roleListHeader);
+	student.roles.forEach(function(r, idx){
+		$roleList.append($('<li>').text(r.name));
+	});
+	$roleDiv.append($roleList);
+
+	$containerDiv.append($infoDiv, $roleDiv);
+	var $editStudentBtn = $('<button>').text('Edit Student').click(editStudentForm);
+
+	$('#content').append($containerDiv, $editStudentBtn);
+}
+
+var editStudentForm = function(student) {
+	console.log('Edit student Form');
 }

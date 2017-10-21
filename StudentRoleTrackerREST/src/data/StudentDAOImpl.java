@@ -90,6 +90,9 @@ public class StudentDAOImpl implements StudentDAO {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			Role mappedRole = mapper.readValue(roleJSON, Role.class);
+			//query list or roles that has the same name as "mappedRole"
+			//iterate over the list, setting each "isCurrent" to FALSE
+			//persist new role with "isCurrent" to be true
 			Student stud = em.find(Student.class, id);
 			mappedRole.setStudent(stud);
 			
@@ -104,6 +107,8 @@ public class StudentDAOImpl implements StudentDAO {
 
 	@Override
 	public Role updateRole(int studentID, int roleID, String roleJSON) {
+		
+		//query for roles that have the same name
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			Role mappedRole = mapper.readValue(roleJSON, Role.class);

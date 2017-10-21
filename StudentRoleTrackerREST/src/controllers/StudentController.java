@@ -35,33 +35,35 @@ public class StudentController {
 
 	@RequestMapping(path="students/{id}", method=RequestMethod.GET)
 	public Student show(@PathVariable int id, HttpServletResponse res) {
-		System.out.println("im hereeee");
-		if (studentdao.showStudentById(id) == null) {
+		Student showStud = studentdao.showStudentById(id);
+		if (showStud == null) {
 			res.setStatus(404);
 			return null;
 		} else {
-			return studentdao.showStudentById(id);
+			return showStud;
 		}
 	}
 	
 	@RequestMapping(path="students", method=RequestMethod.POST)
 	public Student create(@RequestBody String studentJSON, HttpServletResponse res) {
-		if (studentdao.createNewStudent(studentJSON) == null) {
+		Student newStudent = studentdao.createNewStudent(studentJSON);
+		if (newStudent == null) {
 			res.setStatus(400);
 			return null;
 		} else {
 			res.setStatus(200);
-			return studentdao.createNewStudent(studentJSON);
+			return newStudent;
 		}
 	}
 	
 	@RequestMapping(path="students/{id}", method=RequestMethod.PUT)
 	public Student update(@PathVariable int id, @RequestBody String studentJSON, HttpServletResponse res) {
-		if (studentdao.updateStudentById(id, studentJSON) == null) {
+		Student updatedStudent = studentdao.updateStudentById(id, studentJSON);
+		if (updatedStudent == null) {
 			res.setStatus(404);
 			return null;
 		} else {
-			return studentdao.updateStudentById(id, studentJSON);
+			return updatedStudent;
 		}
 	}
 
@@ -78,23 +80,25 @@ public class StudentController {
 
 	@RequestMapping(path="students/{id}/roles", method=RequestMethod.GET)
 	public List<Role> indexRolesByStudentID(@PathVariable int id, HttpServletResponse res) {
-		if (studentdao.getAllRolesByStudentID(id) == null) {
+		List<Role> roles = studentdao.getAllRolesByStudentID(id);
+		if (roles == null) {
 			res.setStatus(400);
 			return null;
 		} else {
 			res.setStatus(200);
-			return studentdao.getAllRolesByStudentID(id);
+			return roles;
 		}
 	}
 
 	@RequestMapping(path="students/{id}/roles", method=RequestMethod.POST)
 	public Role createNewRoleWithStudentID(@PathVariable int id, @RequestBody String roleJSON, HttpServletResponse res) {
-		if (studentdao.createNewRole(id, roleJSON) == null) {
+		Role newRole = studentdao.createNewRole(id, roleJSON);
+		if (newRole == null) {
 			res.setStatus(400);
 			return null;
 		} else {
 			res.setStatus(200);
-			return studentdao.createNewRole(id, roleJSON);
+			return newRole;
 		}
 	}
 
@@ -111,12 +115,13 @@ public class StudentController {
 
 	@RequestMapping(path="students/{studentID}/roles/{roleID}", method=RequestMethod.PUT)
 	public Role updateRole(@PathVariable int studentID, @PathVariable int roleID, @RequestBody String roleJSON, HttpServletResponse res) {
-		if (studentdao.updateRole(studentID, roleID, roleJSON) == null) {
+		Role updatedRole = studentdao.updateRole(studentID, roleID, roleJSON);
+		if (updatedRole == null) {
 			res.setStatus(400);
 			return null;
 		} else {
 			res.setStatus(200);
-			return studentdao.updateRole(studentID, roleID, roleJSON);
+			return updatedRole;
 		}
 	}
 }
