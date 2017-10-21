@@ -3,11 +3,11 @@ $(document).ready(function(){
 	index();
 });
 
-//Index/Show all Quizzes function
+//Index/Show all Students function
 var index = function(){
 	$.ajax({
 		type : 'GET',
-		url : 'http://localhost:8080/StudentRoleTrackerREST/rest/students',
+		url : 'rest/students',
 		dataType : 'json'
 	})
 	.done(generateTable)
@@ -18,6 +18,7 @@ var index = function(){
 };
 
 var generateTable = function(data, status) {
+	console.log("test")
 	console.log(data);
 	//Create table Head element content
 	var $table = $('<table>');
@@ -26,22 +27,46 @@ var generateTable = function(data, status) {
 	var $tHeadRow = $('<tr>').attr('id', 'tableHead').append($tHeaderName, $tHeaderView);
 	var $tHead = $('<thead>').append($tHeadRow);
 	$table.append($tHead);
-	
+
 	//Create table body content
 	var $tBody = $('<tbody>').attr('id', 'tableBody');
-	
+
 	data.forEach(function(student, idx){
-		var $tDataName = $('<td>').text(student.name);
-		var $tDataView = $('<button>').text('View').click(showStudent);
+		var $tDataName = $('<td>').text(student.firstName + " " + student.lastName);
+		var $tDataView = $('<button>');
+		$tDataView.text('View');
+		console.log(student.id)
+		console.log("test")
+		$tDataView.attr('id', student.id);
+		$tDataView.click(viewBtnHandler);
 		var $tRow = $('<tr>').append($tDataName, $tDataView);
 		$tBody.append($tRow);
 	});
 	$table.append($tBody);
-	
+
 	$('#content').append($table);
 };
 
-var showQuiz = function(){
+var viewBtnHandler = function(){
 	console.log("View clicked");
+	jsController(this.id, showStudent);
 };
 
+var jsController = function(studentNum, callbackFunc) {
+	console.log(studentNum)
+	$.ajax({
+		type : 'GET',
+		url : 'rest/students/' + studentNum,
+		dataType : 'json'
+	})
+	.done(callbackFunc)
+	.fail(function(xhr, status, err){
+		console.error("Failed GET Request");
+		console.error(err);
+	})
+};
+
+var showStudent = function(data) {
+	console.log("in showStudent");
+	console.log(data);
+}

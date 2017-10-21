@@ -28,11 +28,14 @@ public class StudentController {
 	
 	@RequestMapping(path="students", method=RequestMethod.GET)
 	public List<Student> index(HttpServletResponse res) {
-		return studentdao.getAllStudents();
+		List<Student> list = studentdao.getAllStudents();
+		System.out.println("test");
+		return list;
 	}
 
 	@RequestMapping(path="students/{id}", method=RequestMethod.GET)
 	public Student show(@PathVariable int id, HttpServletResponse res) {
+		System.out.println("im hereeee");
 		if (studentdao.showStudentById(id) == null) {
 			res.setStatus(404);
 			return null;
