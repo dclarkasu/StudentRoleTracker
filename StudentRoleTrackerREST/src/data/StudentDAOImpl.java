@@ -16,13 +16,13 @@ import entities.Student;
 @Transactional
 @Repository
 public class StudentDAOImpl implements StudentDAO {
-	
+
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	@Override
 	public List<Student> getAllStudents() {
-		String query ="SELECT s FROM Student s";
+		String query = "SELECT s FROM Student s";
 		return em.createQuery(query, Student.class).getResultList();
 	}
 
@@ -39,7 +39,7 @@ public class StudentDAOImpl implements StudentDAO {
 			em.persist(mappedStud);
 			em.flush();
 			return mappedStud;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -76,12 +76,9 @@ public class StudentDAOImpl implements StudentDAO {
 
 	@Override
 	public List<Role> getAllRolesByStudentID(int id) {
-	
-		
+
 		String query = "SELECT r FROM Role r WHERE r.student.id = :id";
-		List<Role> result = em.createQuery(query, Role.class)
-				.setParameter("id", id)
-				.getResultList();
+		List<Role> result = em.createQuery(query, Role.class).setParameter("id", id).getResultList();
 		return result;
 	}
 
@@ -90,12 +87,10 @@ public class StudentDAOImpl implements StudentDAO {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			Role mappedRole = mapper.readValue(roleJSON, Role.class);
-			//query list or roles that has the same name as "mappedRole"
-			//iterate over the list, setting each "isCurrent" to FALSE
-			//persist new role with "isCurrent" to be true
+
 			Student stud = em.find(Student.class, id);
 			mappedRole.setStudent(stud);
-			
+
 			em.persist(mappedRole);
 			em.flush();
 			return mappedRole;
@@ -107,27 +102,28 @@ public class StudentDAOImpl implements StudentDAO {
 
 	@Override
 	public Role updateRole(int studentID, int roleID, String roleJSON) {
-		
-		//query for roles that have the same name
+		// query list or roles that has the same name as "mappedRole"
+		// iterate over the list, setting each "isCurrent" to FALSE
+		// persist new role with "isCurrent" to be true
+
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			Role mappedRole = mapper.readValue(roleJSON, Role.class);
-			Student stud = em.find(Student.class, studentID);
-			Role updateRole = null;
-			
-			for (int i = mappedRole.getId(); i < stud.getRoles().size(); i++) {
-				if (stud.getRoles().get(i).getId() == i) {
-					updateRole = stud.getRoles().get(i);
-				}
+			String query = "Select r FROM Role r WHERE r.name = '" + mappedRole.getName() + "'";
+			try {
+				String studentQuery = "Select r FROM Role r WHERE r.name = '" + mappedRole.getName() + "' and r.isCurrent = true";
+				Role role = em.createQuery(studentQuery, Role.class).getSingleResult();
+				mappedRole.setStudent(role.getStudent());
+				role.setCurrent(false);
+				em.merge(role);
+				em.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			updateRole.setName(mappedRole.getName());
-			updateRole.setDescription(mappedRole.getDescription());
-			updateRole.setStudent(mappedRole.getStudent());
-			updateRole.setCurrent(false);
-//			if (stud.getId() == mappedRole.getStudent().getId() && stud.getRoles()) {
-//				stud.setRoles(stud.getRoles().get(roleID));
-//			}
-			return updateRole;
+			
+			mappedRole.setCurrent(true);
+			em.persist(mappedRole);
+			em.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -145,4 +141,3 @@ public class StudentDAOImpl implements StudentDAO {
 		}
 	}
 }
-

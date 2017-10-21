@@ -10,14 +10,14 @@ var index = function(){
 		url : 'rest/students',
 		dataType : 'json'
 	})
-	.done(generateTable)
+	.done(generateIndexTable)
 	.fail(function(xhr, status , err){
 		console.error("Failed Index Request");
 		console.error(err);
 	})
 };
 //Creates table on index.html
-var generateTable = function(data, status) {
+var generateIndexTable = function(data, status) {
 	console.log("test")
 	console.log(data);
 	//Create table Head element content
@@ -43,14 +43,23 @@ var generateTable = function(data, status) {
 		var $tRow = $('<tr>').append($tDataName, $tDataView);
 		$tBody.append($tRow);
 	});
+	//Create Student btn
+	var $createStudentBtn = $('<button>').text('Create Student');
+	$createStudentBtn.attr('id', 'createStudentBtn')
+		.click(createBtnHandler);
+
 	$table.append($tBody);
-
-	$('#content').append($table);
+	$('#content').append($table, $createStudentBtn);
 };
-
+//Handles e.l. for View btn
 var viewBtnHandler = function(){
 	console.log("View clicked");
 	jsGetController(this.id, showStudent);
+};
+//Handles Create New Student btn
+var createBtnHandler = function(){
+	console.log("Create Stud btn clicked");
+	jsGetController();
 };
 
 var jsGetController = function(studentNum, callbackFunc) {
@@ -66,7 +75,7 @@ var jsGetController = function(studentNum, callbackFunc) {
 		console.error(err);
 	})
 };
-
+//Shows individual student data
 var showStudent = function(student) {
 	console.log("in showStudent");
 	console.log(student);
@@ -83,18 +92,36 @@ var showStudent = function(student) {
 
 	//Build $roleDiv
 	var $roleListHeader = $('<h3>').text('Roles: ');
+	$roleListHeader.append($('<button>').text("Edit Role").click(editRole));
+
 	var $roleList = $('<ul>').append($roleListHeader);
 	student.roles.forEach(function(r, idx){
 		$roleList.append($('<li>').text(r.name));
 	});
 	$roleDiv.append($roleList);
 
-	$containerDiv.append($infoDiv, $roleDiv);
+	//Edit Student btn
 	var $editStudentBtn = $('<button>').text('Edit Student').click(editStudentForm);
 
-	$('#content').append($containerDiv, $editStudentBtn);
-}
+	//Delete Student btn
+	// var $btnDiv = $('<div>').attr('id', 'deleteStudentBtn');
+	var $deleteStudentBtn = $('<button>').text('Delete Student').click(deleteStudent);
 
+	$containerDiv.append($infoDiv, $roleDiv);
+	$('#content').append($containerDiv, $editStudentBtn, $deleteStudentBtn);
+}
+//Buttons
 var editStudentForm = function(student) {
 	console.log('Edit student Form');
+	console.log(student);
 }
+
+var deleteStudent = function(student) {
+	console.log('Delete student clicked');
+	console.log(student);
+}
+
+var editRole = function(role) {
+	console.log("In edit role");
+	console.log(role);
+};
