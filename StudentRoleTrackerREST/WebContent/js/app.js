@@ -16,7 +16,7 @@ $(document).ready(function(){
 // 		console.error(err);
 // 	})
 // };
-
+//*******************************************
 //Creates table on index.html
 var generateIndexTable = function(data, status) {
 	console.log("test")
@@ -28,7 +28,7 @@ var generateIndexTable = function(data, status) {
 	var $tHeadRow = $('<tr>').attr('id', 'tableHead').append($tHeaderName, $tHeaderView);
 	var $tHead = $('<thead>').append($tHeadRow);
 	$table.append($tHead);
-
+//*******************************************
 	//Create table body content
 	var $tBody = $('<tbody>').attr('id', 'tableBody');
 
@@ -62,7 +62,7 @@ var createBtnHandler = function(){
 	console.log("Create Stud btn clicked");
 	buildNewStudentForm();
 };
-
+//*******************************************
 var jsGetController = function(studentNum, callbackFunc) {
 	console.log(studentNum)
 	$.ajax({
@@ -76,6 +76,7 @@ var jsGetController = function(studentNum, callbackFunc) {
 		console.error(err);
 	})
 };
+//*******************************************
 //Shows individual student data
 var showStudent = function(student) {
 	console.log("in showStudent");
@@ -126,7 +127,7 @@ var editRole = function(role) {
 	console.log("In edit role");
 	console.log(role);
 };
-
+//*******************************************
 var buildNewStudentForm = function() {
 	var $form = $('<form name="newStudentForm">');
 	$form.append($('<fieldset>'));
@@ -152,7 +153,7 @@ var buildNewStudentForm = function() {
 	$('#content').append($form);
 	$('#createStudentBtn').remove();
 };
-
+//*******************************************
 var createNewStudent = function(e){
 	e.preventDefault();
 	console.log("In createNewStudent");
@@ -161,5 +162,20 @@ var createNewStudent = function(e){
 	newStudent.firstName = $(newStudentForm.fName).val();
 	newStudent.lastName = $(newStudentForm.lName).val();
 	newStudent.grade = $(newStudentForm.grade).val();
+	newStudent.roles = [];
 	console.log(newStudent);
+
+	$.ajax({
+		type : 'POST',
+		url : 'rest/students',
+		dataType : 'json',
+		contentType : 'application/json',
+		data : JSON.stringify(newStudent)
+	})
+	.done(showStudent)
+	.fail(function(xhr, status, err){
+		console.error("Failed Student POST");
+		console.error(err);
+	})
 };
+//*******************************************
