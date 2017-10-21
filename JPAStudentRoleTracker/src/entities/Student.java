@@ -23,6 +23,7 @@ public class Student {
 
 	private String grade;
 	
+	//Eager Fetch prevents lazy loading
 	@JsonManagedReference(value="studentToRole")
 	@OneToMany(mappedBy = "student", fetch=FetchType.EAGER)
 	private List<Role> roles;
