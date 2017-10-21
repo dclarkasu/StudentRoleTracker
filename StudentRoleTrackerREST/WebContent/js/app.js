@@ -21,6 +21,7 @@ $(document).ready(function(){
 var generateIndexTable = function(data, status) {
 	console.log("test")
 	console.log(data);
+	$('#content').empty();
 	//Create table Head element content
 	var $table = $('<table>');
 	var $tHeaderName = $('<th>').text('Student Name');
@@ -106,26 +107,33 @@ var showStudent = function(student) {
 	var $editStudentBtn = $('<button>').text('Edit Student').click(editStudentForm);
 
 	//Delete Student btn
-	// var $btnDiv = $('<div>').attr('id', 'deleteStudentBtn');
-	var $deleteStudentBtn = $('<button>').text('Delete Student').click(deleteStudent);
+	var $deleteStudentBtn = $('<button>').text('Delete Student').attr('id', student.id).click(deleteBtnHandler);
+
+	var $returnBtn = $('<button>').text('Return to Home').click(returnHome);
 
 	$containerDiv.append($infoDiv, $roleDiv);
-	$('#content').append($containerDiv, $editStudentBtn, $deleteStudentBtn);
-}
-//Buttons
+	$('#content').append($containerDiv, $editStudentBtn, $deleteStudentBtn, $returnBtn);
+};
+//*******************************************
+//showStudent Button Listeners
 var editStudentForm = function(student) {
 	console.log('Edit student Form');
 	console.log(student);
-}
+};
 
-var deleteStudent = function(student) {
+var deleteBtnHandler = function() {
 	console.log('Delete student clicked');
-	console.log(student);
-}
+	deleteStudent(this.id);
+};
 
 var editRole = function(role) {
 	console.log("In edit role");
 	console.log(role);
+};
+
+var returnHome = function() {
+	console.log('Edit student Form');
+	jsGetController('', generateIndexTable);
 };
 //*******************************************
 var buildNewStudentForm = function() {
@@ -179,3 +187,17 @@ var createNewStudent = function(e){
 	})
 };
 //*******************************************
+var deleteStudent = function(id) {
+	$.ajax({
+		type : 'DELETE',
+		url : 'rest/students/'+id
+	})
+	.done(function(data){
+		jsGetController('', generateIndexTable);
+		console.log("Delete true");
+	})
+	.fail(function(xhr, status, err){
+		console.error("Failed Delete Student");
+		console.error(err);
+	})
+};
