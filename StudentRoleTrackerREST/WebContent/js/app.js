@@ -16,7 +16,7 @@ $(document).ready(function(){
 // 		console.error(err);
 // 	})
 // };
-//*******************************************
+//**************************************************
 //Creates table on index.html
 var generateIndexTable = function(data, status) {
 	console.log("test")
@@ -29,7 +29,7 @@ var generateIndexTable = function(data, status) {
 	var $tHeadRow = $('<tr>').attr('id', 'tableHead').append($tHeaderName, $tHeaderView);
 	var $tHead = $('<thead>').append($tHeadRow);
 	$table.append($tHead);
-//*******************************************
+//**************************************************
 	//Create table body content
 	var $tBody = $('<tbody>').attr('id', 'tableBody');
 
@@ -63,7 +63,7 @@ var createBtnHandler = function(){
 	console.log("Create Stud btn clicked");
 	buildNewStudentForm();
 };
-//*******************************************
+//**************************************************
 var jsGetController = function(studentNum, callbackFunc) {
 	console.log(studentNum)
 	$.ajax({
@@ -77,7 +77,7 @@ var jsGetController = function(studentNum, callbackFunc) {
 		console.error(err);
 	})
 };
-//*******************************************
+//**************************************************
 //Shows individual student data
 var showStudent = function(student) {
 	console.log("in showStudent");
@@ -104,7 +104,7 @@ var showStudent = function(student) {
 	$roleDiv.append($roleList);
 
 	//Edit Student btn
-	var $editStudentBtn = $('<button>').text('Edit Student').click(editStudentForm);
+	var $editStudentBtn = $('<button>').text('Edit Student').attr('id', student.id).click(editStudentHandler);
 
 	//Delete Student btn
 	var $deleteStudentBtn = $('<button>').text('Delete Student').attr('id', student.id).click(deleteBtnHandler);
@@ -114,11 +114,11 @@ var showStudent = function(student) {
 	$containerDiv.append($infoDiv, $roleDiv);
 	$('#content').append($containerDiv, $editStudentBtn, $deleteStudentBtn, $returnBtn);
 };
-//*******************************************
+//**************************************************
 //showStudent Button Listeners
-var editStudentForm = function(student) {
-	console.log('Edit student Form');
-	console.log(student);
+var editStudentHandler = function() {
+	console.log('Edit student Form clicked');
+	buildUpdateStudentForm(this.id);
 };
 
 var deleteBtnHandler = function() {
@@ -135,7 +135,7 @@ var returnHome = function() {
 	console.log('Edit student Form');
 	jsGetController('', generateIndexTable);
 };
-//*******************************************
+//**************************************************
 var buildNewStudentForm = function() {
 	var $form = $('<form name="newStudentForm">');
 	$form.append($('<fieldset>'));
@@ -161,7 +161,7 @@ var buildNewStudentForm = function() {
 	$('#content').append($form);
 	$('#createStudentBtn').remove();
 };
-//*******************************************
+//**************************************************
 var createNewStudent = function(e){
 	e.preventDefault();
 	console.log("In createNewStudent");
@@ -186,18 +186,79 @@ var createNewStudent = function(e){
 		console.error(err);
 	})
 };
-//*******************************************
-var deleteStudent = function(id) {
+//**************************************************
+var editStudent = function(id, e) {
+	e.preventDefault();
+	console.log('In edit student ' + id);
+	console.log("test" + $(updateStudentForm.fName).val());
+	var studToEdit = {
+		firstName : $(updateStudentForm.fName).val(),
+		lastName : $(updateStudentForm.lName).val(),
+		grade : $(updateStudentForm.grade).val(),
+		roles : []
+	};
+
 	$.ajax({
-		type : 'DELETE',
-		url : 'rest/students/'+id
+		type : 'PUT',
+		url : 'rest/students/'+id,
+		dataType : 'json',
+		contentType : 'application/json',
+		data : JSON.stringify(studToEdit)
 	})
-	.done(function(data){
-		jsGetController('', generateIndexTable);
-		console.log("Delete true");
-	})
-	.fail(function(xhr, status, err){
-		console.error("Failed Delete Student");
+	//returns user to the same showStudent view
+	.done(showStudent(studToEdit))
+	.fail(function(xhr, status, err) {
+		console.error("Failed Student PUT");
 		console.error(err);
 	})
 };
+//**************************************************
+var deleteStudent = function(id) {
+	if (window.confirm("Are you sure you want to delete this?")) {
+		$.ajax({
+			type : 'DELETE',
+			url : 'rest/students/'+id
+		})
+		.done(function(data){
+			//returns to home showing all students
+			jsGetController('', generateIndexTable);
+			console.log("Delete true");
+		})
+		.fail(function(xhr, status, err){
+			console.error("Failed Delete Student");
+			console.error(err);
+		})
+	} else {
+		//returns user to the same showStudent view
+		jsGetController(this.id, showStudent);
+	}
+};
+//**************************************************
+var buildUpdateStudentForm = function(studentID) {
+	var $form = $('<form name="updateStudentForm">');
+	$form.append($('<fieldset>'));
+	$form.append($('<legend>').text('Update Student'));
+
+	var $fNameInput = $('<input>'); //type text is default
+	$fNameInput.attr('name', 'fName');
+	$fNameInput.attr('placeholder', 'First Name');
+
+	var $lNameInput = $('<input>');
+	$lNameInput.attr('name', 'lName');
+	$lNameInput.attr('placeholder', 'Last Name');
+
+	var $grade = $('<input>');
+	$grade.attr('name', 'grade');
+	$grade.attr('placeholder', 'Grade');
+
+	var $submit = $('<input type="submit">');
+	$submit.val('Update');
+	//Append everything to html
+	$submit.click(function(e){
+		editStudent(studentID, e);
+	});
+	$form.append($fNameInput, $lNameInput, $grade, $submit);
+	$('#content').append($form);
+	// $('#createStudentBtn').remove();
+};
+//**************************************************
