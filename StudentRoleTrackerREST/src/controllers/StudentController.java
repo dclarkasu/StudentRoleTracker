@@ -92,6 +92,7 @@ public class StudentController {
 
 	@RequestMapping(path="students/{id}/roles", method=RequestMethod.POST)
 	public Role createNewRoleWithStudentID(@PathVariable int id, @RequestBody String roleJSON, HttpServletResponse res) {
+		System.out.println(roleJSON);
 		Role newRole = studentdao.createNewRole(id, roleJSON);
 		if (newRole == null) {
 			res.setStatus(400);
@@ -116,6 +117,7 @@ public class StudentController {
 	@RequestMapping(path="students/{studentID}/roles/{roleID}", method=RequestMethod.PUT)
 	public Role updateRole(@PathVariable int studentID, @PathVariable int roleID, @RequestBody String roleJSON, HttpServletResponse res) {
 		Role updatedRole = studentdao.updateRole(studentID, roleID, roleJSON);
+		System.out.println("*******************" + updatedRole);
 		if (updatedRole == null) {
 			res.setStatus(400);
 			return null;

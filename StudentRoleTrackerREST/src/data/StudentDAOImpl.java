@@ -84,6 +84,7 @@ public class StudentDAOImpl implements StudentDAO {
 
 	@Override
 	public Role createNewRole(int id, String roleJSON) {
+		System.out.println("*********************");
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			Role mappedRole = mapper.readValue(roleJSON, Role.class);
@@ -108,6 +109,7 @@ public class StudentDAOImpl implements StudentDAO {
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
+			
 			Role mappedRole = mapper.readValue(roleJSON, Role.class);
 			String query = "Select r FROM Role r WHERE r.name = '" + mappedRole.getName() + "'";
 			try {
@@ -124,6 +126,7 @@ public class StudentDAOImpl implements StudentDAO {
 			mappedRole.setCurrent(true);
 			em.persist(mappedRole);
 			em.flush();
+			return mappedRole;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

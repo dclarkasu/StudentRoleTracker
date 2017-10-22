@@ -3,19 +3,6 @@ $(document).ready(function(){
 	jsGetController('', generateIndexTable);
 });
 
-//Index/Show all Students function
-// var index = function(){
-// 	$.ajax({
-// 		type : 'GET',
-// 		url : 'rest/students',
-// 		dataType : 'json'
-// 	})
-// 	.done(generateIndexTable)
-// 	.fail(function(xhr, status , err){
-// 		console.error("Failed Index Request");
-// 		console.error(err);
-// 	})
-// };
 //**************************************************
 //Creates table on index.html
 var generateIndexTable = function(data, status) {
@@ -95,11 +82,23 @@ var showStudent = function(student) {
 
 	//Build $roleDiv
 	var $roleListHeader = $('<h3>').text('Roles: ');
-	$roleListHeader.append($('<button>').text("Edit Role").click(editRole));
+	var $newRoleBtn = $('<button>').text('Add New Role')
+	$newRoleBtn.attr("id", student.id);
+	$newRoleBtn.click(function(e){
+		newRoleHandler(this.id);
+	})
+	$roleListHeader.append($newRoleBtn);
 
 	var $roleList = $('<ul>').append($roleListHeader);
+	// var $editRoleBtn = $('<button>').text("Edit Role").click(editRoleHandler);
+	//For each for Roles list
 	student.roles.forEach(function(r, idx){
-		$roleList.append($('<li>').text(r.name));
+		var $liRoles = $('<li>').text(r.name);
+		var $editRoleBtn = $('<button>').text("Edit Role").click(function(e){
+			editRoleHandler(student.id, r.id);
+		});
+		$liRoles.append($editRoleBtn);
+		$roleList.append($liRoles);
 	});
 	$roleDiv.append($roleList);
 
@@ -134,6 +133,16 @@ var editRole = function(role) {
 var returnHome = function() {
 	console.log('Edit student Form');
 	jsGetController('', generateIndexTable);
+};
+
+var editRoleHandler = function(studentId, roleId) {
+	console.log('Edit Role clicked');
+	buildAddRoleForm(studentId, roleId);
+};
+
+var newRoleHandler = function(id) {
+	console.log('New Role clicked');
+	buildNewRoleForm(id);
 };
 //**************************************************
 var buildNewStudentForm = function() {
@@ -262,3 +271,103 @@ var buildUpdateStudentForm = function(studentID) {
 	// $('#createStudentBtn').remove();
 };
 //**************************************************
+var buildNewRoleForm = function(id){
+	console.log("In new role form");
+	console.log("Students id: " + id);
+	var $newRoleForm = $('<form name="newRoleForm">');
+	$newRoleForm.append($('<fieldset>'));
+	$newRoleForm.append($('<legend>').text('Create Role'));
+
+	var $name = $('<input>'); //type text is default
+	$name.attr('name', 'name');
+	$name.attr('placeholder', 'Role Name');
+
+	var $description = $('<input>');
+	$description.attr('name', 'description');
+	$description.attr('placeholder', 'Description');
+
+	// var $isCurrent = $('<input>');
+	// $isCurrent.attr('name', 'isCurrent');
+	// $isCurrent.attr('placeholder', 'Currently Assigned');
+
+	var $submit = $('<input type="submit">');
+	$submit.val('Create');
+
+
+	//Append everything to html
+	$submit.click(function(e){
+		createNewRole(e, id);
+	});
+	$newRoleForm.append($name, $description, $submit);
+	$('#content').append($newRoleForm);
+};
+//**************************************************
+var buildAddRoleForm = function(studentId, roleId){
+	console.log("In new role form");
+	console.log("Students id: " + studentId);
+	var $newRoleForm = $('<form name="newRoleForm">');
+	$newRoleForm.append($('<fieldset>'));
+	$newRoleForm.append($('<legend>').text('Create Role'));
+
+	var $name = $('<p>'); //type text is default
+	$name.attr('name', 'name');
+	$name.text("NAME OF ROLE");
+
+	var $description = $('<input>');
+	$description.attr('name', 'description');
+	$description.attr('placeholder', 'Description');
+
+	// var $isCurrent = $('<input>');
+	// $isCurrent.attr('name', 'isCurrent');
+	// $isCurrent.attr('placeholder', 'Currently Assigned');
+
+	var $submit = $('<input type="submit">');
+	$submit.val('Create');
+
+
+	//Append everything to html
+	$submit.click(function(e){
+		createAddRole(e, studentId, roleId);
+	});
+	$newRoleForm.append($name, $description, $submit);
+	$('#content').append($newRoleForm);
+};
+//**************************************************
+var createNewRole = function(e, id) {
+	e.preventDefault();
+	console.log("in cerate new role");
+
+	var newRole = {
+		name : $(newRoleForm.name).val(),
+		description  : $(newRoleForm.description).val()
+	};
+	console.log(newRole);
+
+	$.ajax({
+		type : 'POST',
+		url : 'rest/students/' + id + "/roles",
+		dataType : 'json',
+		contentType : 'application/json',
+		data : JSON.stringify(newRole)
+	})
+}
+//**************************************************
+//Update method for roles
+var createAddRole = function(e, studentId, roleId) {
+	e.preventDefault();
+	console.log("in cerate new role");
+
+	var newRole = {
+		name : "Hall Monitor",
+		description  : $(newRoleForm.description).val()
+	};
+	console.log(newRole);
+
+	$.ajax({
+		type : 'PUT',
+		url : 'rest/students/' + studentId + "/roles/" + roleId,
+		dataType : 'json',
+		contentType : 'application/json',
+		data : JSON.stringify(newRole)
+	})
+}
