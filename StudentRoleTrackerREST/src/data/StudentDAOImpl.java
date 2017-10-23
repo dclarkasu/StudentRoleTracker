@@ -143,4 +143,20 @@ public class StudentDAOImpl implements StudentDAO {
 			return false;
 		}
 	}
+	
+	//SELECT DISTINCT r.id from ROLE r where r.isCurrent = true"
+	//store into List<Integer> ids
+	//create a new List<Student> students
+	
+	//for(Integer id: ids){
+	//Student s = em.find(Student.class, id);
+	//students.add(s);
+	//}
+	//return students
+	
+	//COULD create a list of all students and iterate over it chercking for those whose
+	// id's don't match the above list and making the non mathcers into another list
+	
+	//Would write an ajax method for this new route to display on front end
+	
 }

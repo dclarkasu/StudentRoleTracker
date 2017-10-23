@@ -126,4 +126,16 @@ public class StudentController {
 			return updatedRole;
 		}
 	}
+	
+//	@RequestMapping(path="students/roles", method=RequestMethod.GET)
+//	public List<Role> indexRolesByStudentID(@PathVariable int id, HttpServletResponse res) {
+//		List<Role> roles = studentdao.getAllRolesByStudentID(id);
+//		if (roles == null) {
+//			res.setStatus(400);
+//			return null;
+//		} else {
+//			res.setStatus(200);
+//			return roles;
+//		}
+//	}
 }

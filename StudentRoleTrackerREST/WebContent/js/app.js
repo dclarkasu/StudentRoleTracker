@@ -3,8 +3,8 @@ $(document).ready(function(){
 	jsGetController('', generateIndexTable);
 });
 
-//**************************************************
-//Creates table on index.html
+//***************************************************************
+//Creates table on index.html with all students
 var generateIndexTable = function(data, status) {
 	console.log("test")
 	console.log(data);
@@ -16,8 +16,8 @@ var generateIndexTable = function(data, status) {
 	var $tHeadRow = $('<tr>').attr('id', 'tableHead').append($tHeaderName, $tHeaderView);
 	var $tHead = $('<thead>').append($tHeadRow);
 	$table.append($tHead);
-//**************************************************
-	//Create table body content
+//***************************************************************
+	//Create table body content and structure
 	var $tBody = $('<tbody>').attr('id', 'tableBody');
 
 	data.forEach(function(student, idx){
@@ -50,7 +50,8 @@ var createBtnHandler = function(){
 	console.log("Create Stud btn clicked");
 	buildNewStudentForm();
 };
-//**************************************************
+//***************************************************************
+//Controls GET Student methods
 var jsGetController = function(studentNum, callbackFunc) {
 	console.log(studentNum)
 	$.ajax({
@@ -64,7 +65,8 @@ var jsGetController = function(studentNum, callbackFunc) {
 		console.error(err);
 	})
 };
-//**************************************************
+//***************************************************************
+//***************************************************************
 //Shows individual student data
 var showStudent = function(student) {
 	console.log("in showStudent");
@@ -75,12 +77,12 @@ var showStudent = function(student) {
 	var $infoDiv = $('<div>').attr('id', 'infoDiv');
 	var $roleDiv = $('<div>').attr('id', 'roleDiv');
 
-	//Build $infoDiv
+	//Build $infoDiv which displays general student info
 	var $nameHeader = $('<h2>').text(student.firstName + " " + student.lastName)
 	var $grade = $('<h3>').text(student.grade);
 	$infoDiv.append($nameHeader, $grade);
 
-	//Build $roleDiv
+	//Build $roleDiv which displays roles
 	var $roleListHeader = $('<h3>').text('Roles: ');
 	var $newRoleBtn = $('<button>').text('Add New Role')
 	$newRoleBtn.attr("id", student.id);
@@ -89,15 +91,19 @@ var showStudent = function(student) {
 	})
 	$roleListHeader.append($newRoleBtn);
 
+	//Displays List of Roles nby Student
 	var $roleList = $('<ul>').append($roleListHeader);
-	// var $editRoleBtn = $('<button>').text("Edit Role").click(editRoleHandler);
 	//For each for Roles list
 	student.roles.forEach(function(r, idx){
 		var $liRoles = $('<li>').text(r.name);
 		var $editRoleBtn = $('<button>').text("Edit Role").click(function(e){
-			editRoleHandler(student.id, r.id);
+			editRoleHandler(student.id, r.id, r.name);
 		});
-		$liRoles.append($editRoleBtn);
+		var $deleteRoleBtn = $('<button>').text('Delete').attr('id', r.id)
+			.click(function(e){
+				deleteRoleHandler(student.id, r.id);
+			});
+		$liRoles.append($editRoleBtn, $deleteRoleBtn);
 		$roleList.append($liRoles);
 	});
 	$roleDiv.append($roleList);
@@ -107,14 +113,14 @@ var showStudent = function(student) {
 
 	//Delete Student btn
 	var $deleteStudentBtn = $('<button>').text('Delete Student').attr('id', student.id).click(deleteBtnHandler);
-
+	//Return to full Student List btn
 	var $returnBtn = $('<button>').text('Return to Home').click(returnHome);
 
 	$containerDiv.append($infoDiv, $roleDiv);
 	$('#content').append($containerDiv, $editStudentBtn, $deleteStudentBtn, $returnBtn);
 };
-//**************************************************
-//showStudent Button Listeners
+//***************************************************************
+//showStudent function Button Listeners
 var editStudentHandler = function() {
 	console.log('Edit student Form clicked');
 	buildUpdateStudentForm(this.id);
@@ -135,16 +141,23 @@ var returnHome = function() {
 	jsGetController('', generateIndexTable);
 };
 
-var editRoleHandler = function(studentId, roleId) {
+var editRoleHandler = function(studentId, roleId, roleName) {
 	console.log('Edit Role clicked');
-	buildAddRoleForm(studentId, roleId);
+	buildAddRoleForm(studentId, roleId, roleName);
 };
 
 var newRoleHandler = function(id) {
 	console.log('New Role clicked');
 	buildNewRoleForm(id);
 };
-//**************************************************
+
+var deleteRoleHandler = function(studentId, roleId) {
+	console.log('Delete Role clicked');
+	deleteRole(studentId, roleId);
+};
+//***************************************************************
+//***************************************************************
+//Creates form for adding new student
 var buildNewStudentForm = function() {
 	var $form = $('<form name="newStudentForm">');
 	$form.append($('<fieldset>'));
@@ -165,12 +178,14 @@ var buildNewStudentForm = function() {
 	var $submit = $('<input type="submit">');
 	$submit.val('Submit');
 	//Append everything to html
+	//Listener is attached to submit btn
 	$submit.click(createNewStudent);
 	$form.append($fNameInput, $lNameInput, $grade, $submit);
 	$('#content').append($form);
 	$('#createStudentBtn').remove();
 };
-//**************************************************
+//***************************************************************
+//Creates new Student obj and performs ajax request to DB
 var createNewStudent = function(e){
 	e.preventDefault();
 	console.log("In createNewStudent");
@@ -195,7 +210,7 @@ var createNewStudent = function(e){
 		console.error(err);
 	})
 };
-//**************************************************
+//***************************************************************
 var editStudent = function(id, e) {
 	e.preventDefault();
 	console.log('In edit student ' + id);
@@ -221,7 +236,7 @@ var editStudent = function(id, e) {
 		console.error(err);
 	})
 };
-//**************************************************
+//***************************************************************
 var deleteStudent = function(id) {
 	if (window.confirm("Are you sure you want to delete this?")) {
 		$.ajax({
@@ -242,7 +257,7 @@ var deleteStudent = function(id) {
 		jsGetController(this.id, showStudent);
 	}
 };
-//**************************************************
+//***************************************************************
 var buildUpdateStudentForm = function(studentID) {
 	var $form = $('<form name="updateStudentForm">');
 	$form.append($('<fieldset>'));
@@ -270,7 +285,7 @@ var buildUpdateStudentForm = function(studentID) {
 	$('#content').append($form);
 	// $('#createStudentBtn').remove();
 };
-//**************************************************
+//***************************************************************
 var buildNewRoleForm = function(id){
 	console.log("In new role form");
 	console.log("Students id: " + id);
@@ -301,17 +316,17 @@ var buildNewRoleForm = function(id){
 	$newRoleForm.append($name, $description, $submit);
 	$('#content').append($newRoleForm);
 };
-//**************************************************
-var buildAddRoleForm = function(studentId, roleId){
-	console.log("In new role form");
+//***************************************************************
+var buildAddRoleForm = function(studentId, roleId, roleName){
+	console.log("In update role form");
 	console.log("Students id: " + studentId);
-	var $newRoleForm = $('<form name="newRoleForm">');
-	$newRoleForm.append($('<fieldset>'));
-	$newRoleForm.append($('<legend>').text('Create Role'));
+	var $updateRoleForm = $('<form name="updateRoleForm">');
+	$updateRoleForm.append($('<fieldset>'));
+	$updateRoleForm.append($('<legend>').text('Update Role'));
 
 	var $name = $('<p>'); //type text is default
 	$name.attr('name', 'name');
-	$name.text("NAME OF ROLE");
+	$name.text(roleName);
 
 	var $description = $('<input>');
 	$description.attr('name', 'description');
@@ -322,20 +337,20 @@ var buildAddRoleForm = function(studentId, roleId){
 	// $isCurrent.attr('placeholder', 'Currently Assigned');
 
 	var $submit = $('<input type="submit">');
-	$submit.val('Create');
+	$submit.val('Update');
 
 
 	//Append everything to html
 	$submit.click(function(e){
-		createAddRole(e, studentId, roleId);
+		createAddRole(e, studentId, roleId, roleName);
 	});
-	$newRoleForm.append($name, $description, $submit);
-	$('#content').append($newRoleForm);
+	$updateRoleForm.append($name, $description, $submit);
+	$('#content').append($updateRoleForm);
 };
-//**************************************************
+//***************************************************************
 var createNewRole = function(e, id) {
 	e.preventDefault();
-	console.log("in cerate new role");
+	console.log("in create new role");
 
 	var newRole = {
 		name : $(newRoleForm.name).val(),
@@ -350,16 +365,21 @@ var createNewRole = function(e, id) {
 		contentType : 'application/json',
 		data : JSON.stringify(newRole)
 	})
+	.done(jsGetController(id, showStudent))
+	.fail(function(xhr, status, err){
+		console.error("Failed Role POST");
+		console.error(err);
+	})
 }
-//**************************************************
+//***************************************************************
 //Update method for roles
-var createAddRole = function(e, studentId, roleId) {
+var createAddRole = function(e, studentId, roleId, roleName) {
 	e.preventDefault();
-	console.log("in cerate new role");
+	console.log("in update role");
 
 	var newRole = {
-		name : "Hall Monitor",
-		description  : $(newRoleForm.description).val()
+		name : roleName,
+		description  : $(updateRoleForm.description).val()
 	};
 	console.log(newRole);
 
@@ -370,4 +390,31 @@ var createAddRole = function(e, studentId, roleId) {
 		contentType : 'application/json',
 		data : JSON.stringify(newRole)
 	})
+	.done(jsGetController(studentId, showStudent))
+	.fail(function(xhr, status, err){
+		console.error('Failed Role PUT');
+		console.error(err);
+	})
 }
+//***************************************************************
+var deleteRole = function(studentId, roleId) {
+	if (window.confirm("Are you sure you want to delete this?")) {
+		$.ajax({
+			type : 'DELETE',
+			url : 'rest/students/'+studentId+'/roles/'+roleId
+		})
+		.done(function(data){
+			//returns to home showing all students
+			jsGetController(studentId, showStudent);
+			console.log("Delete Role true");
+		})
+		.fail(function(xhr, status, err){
+			console.error("Failed Delete Role");
+			console.error(err);
+		})
+	} else {
+		//returns user to the same showStudent view
+		jsGetController(studentId, showStudent);
+	}
+};
+//***************************************************************
