@@ -16,7 +16,7 @@ var generateIndexTable = function(data, status) {
 	var $tHeadRow = $('<tr>').attr('id', 'tableHead').append($tHeaderName, $tHeaderView);
 	var $tHead = $('<thead>').append($tHeadRow);
 	$table.append($tHead);
-//***************************************************************
+
 	//Create table body content and structure
 	var $tBody = $('<tbody>').attr('id', 'tableBody');
 
@@ -36,9 +36,13 @@ var generateIndexTable = function(data, status) {
 	var $createStudentBtn = $('<button>').text('Create Student');
 	$createStudentBtn.attr('id', 'createStudentBtn')
 		.click(createBtnHandler);
+	//Show Students by assigned Roles btn
+	var $assignedRolesBtn = $('<button>').text('Students Assigned Roles');
+	$assignedRolesBtn.attr('id', 'assignedRolesBtn')
+		.click(assignedRoleBtnHandler);
 
 	$table.append($tBody);
-	$('#content').append($table, $createStudentBtn);
+	$('#content').append($table, $createStudentBtn, $assignedRolesBtn);
 };
 //Handles e.l. for View btn
 var viewBtnHandler = function(){
@@ -49,6 +53,11 @@ var viewBtnHandler = function(){
 var createBtnHandler = function(){
 	console.log("Create Stud btn clicked");
 	buildNewStudentForm();
+};
+
+var assignedRoleBtnHandler = function(){
+	console.log("Assigned Role btn clicked");
+	getAssignedRoles();
 };
 //***************************************************************
 //Controls GET Student methods
@@ -91,7 +100,7 @@ var showStudent = function(student) {
 	})
 	$roleListHeader.append($newRoleBtn);
 
-	//Displays List of Roles nby Student
+	//Displays List of Roles by Student
 	var $roleList = $('<ul>').append($roleListHeader);
 	//For each for Roles list
 	student.roles.forEach(function(r, idx){
@@ -418,3 +427,36 @@ var deleteRole = function(studentId, roleId) {
 	}
 };
 //***************************************************************
+//Requests Students With Currently Assigned Roles
+var getAssignedRoles = function(){
+	console.log("in display assigned roles");
+	$.ajax({
+		type : 'GET',
+		url: 'rest/students/roles',
+		dataType : 'json'
+	})
+	.done(displayAssignedRoles)
+	.fail(function(xhr, status, err){
+		console.error("GET Assigned Roles Failed");
+		console.error(err);
+	})
+};
+//***************************************************************
+//Displays Students With Currently Assigned Roles
+var displayAssignedRoles = function(students) {
+	console.log(students);
+	$('#content').empty();
+
+	var $h2 = $('<h2>').attr('id', 'assignedHeader').text("Students With Currently Assigned Roles").attr('id', 'assignedHeader');
+	// var $h3 = $('<h3>').text("I know it's not correct yet, BUT...it's still aggregated data");
+
+	var $assignedUL = $('<ul>');
+	students.forEach(function(stud, idx){
+		var $assignedLI = $('<li>').text(stud.firstName + " " + stud.lastName);
+		$assignedUL.append($assignedLI);
+	});
+
+	var $returnBtn = $('<button>').text('Return to Home').click(returnHome);
+
+	$('#content').append($h2, $assignedUL, $returnBtn);
+};

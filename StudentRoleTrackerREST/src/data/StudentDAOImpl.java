@@ -1,6 +1,8 @@
 package data;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,7 +21,7 @@ public class StudentDAOImpl implements StudentDAO {
 
 	@PersistenceContext
 	private EntityManager em;
-
+	
 	@Override
 	public List<Student> getAllStudents() {
 		String query = "SELECT s FROM Student s";
@@ -138,11 +140,55 @@ public class StudentDAOImpl implements StudentDAO {
 		Role role = em.find(Role.class, roleID);
 		if (role.getStudent().getId() == studentID) {
 			em.remove(role);
+			System.out.println("******************************************************");
+			System.out.println("In Destroy Role True");
 			return true;
 		} else {
 			return false;
 		}
 	}
+	
+	Set assignedStudents = new HashSet<Student>();
+	@Override
+	public Set<Student> getStudentsWithCurrentRole() {
+		String query = "SELECT DISTINCT r.id FROM Role r WHERE r.isCurrent = true";
+		List<Integer> ids = em.createQuery(query).getResultList();
+		System.out.println("*******************************************************");
+		System.out.println(ids);
+		
+		String query2 = "SELECT s FROM Student s";
+		List<Student> studs = em.createQuery(query2, Student.class).getResultList();
+		System.out.println("********************************************");
+		System.out.println(studs);
+		Student s = new Student();
+		
+		
+//		StudentDAOImpl studDAOImpl = new StudentDAOImpl();
+//		List<Student> students = studDAOImpl.getAllStudents();
+		Role r;
+		
+		for (Integer id : ids) {
+			r = em.find(Role.class, id);
+			System.out.println("********************************************");
+			System.out.println(r);
+			for (int i = 0; i < studs.size(); i++) {
+				for (int j = 0; j < studs.get(i).getRoles().size(); j++) {
+					if (r.getId() == studs.get(i).getRoles().get(j).getId()) {
+						s = studs.get(i);
+						assignedStudents.add(s);
+					} else {
+						System.out.println("********************************************");
+						System.out.println("Student not added to isCurrent list");
+					}
+				}
+			}
+		}
+		return assignedStudents;
+		
+//		String query2 = "SELECT s FROM Student s JOIN FETCH Role r WHERE s.roles.r.id = ";
+	}
+	
+	//SELECT DISTINCT r.id FROM ROLE r JOIN Student s WHERE s.roles.r.isCurrent = true";
 	
 	//SELECT DISTINCT r.id from ROLE r where r.isCurrent = true"
 	//store into List<Integer> ids

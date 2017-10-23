@@ -2,6 +2,7 @@ package entities;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ public class Student {
 	
 	//Eager Fetch prevents lazy loading
 	@JsonManagedReference(value="studentToRole")
-	@OneToMany(mappedBy = "student", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "student", fetch=FetchType.EAGER, cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<Role> roles;
 
 	public String getFirstName() {

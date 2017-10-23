@@ -1,6 +1,7 @@
 package data;
 
 import java.util.List;
+import java.util.Set;
 
 import entities.Role;
 import entities.Student;
@@ -17,5 +18,7 @@ public interface StudentDAO {
 	public Role createNewRole(int id, String roleJSON);
 	public Role updateRole(int studentID, int roleID, String roleJSON);
 	public boolean destroyRole(int studentID, int roleID);
+	
+	public Set<Student> getStudentsWithCurrentRole();
 
 }

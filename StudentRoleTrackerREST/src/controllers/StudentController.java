@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -107,9 +108,11 @@ public class StudentController {
 	public boolean deleteRoleByID(@PathVariable int studentID, @PathVariable int roleID, HttpServletResponse res) {
 		if (studentdao.destroyRole(studentID, roleID) == false) {
 			res.setStatus(400);
+			System.out.println("******************************************false");
 			return false;
 		} else {
 			res.setStatus(200);
+			System.out.println("******************************************true");
 			return true;
 		}
 	}
@@ -127,15 +130,15 @@ public class StudentController {
 		}
 	}
 	
-//	@RequestMapping(path="students/roles", method=RequestMethod.GET)
-//	public List<Role> indexRolesByStudentID(@PathVariable int id, HttpServletResponse res) {
-//		List<Role> roles = studentdao.getAllRolesByStudentID(id);
-//		if (roles == null) {
-//			res.setStatus(400);
-//			return null;
-//		} else {
-//			res.setStatus(200);
-//			return roles;
-//		}
-//	}
+	@RequestMapping(path="students/roles", method=RequestMethod.GET)
+	public Set<Student> indexStudentsByCurrentRole(HttpServletResponse res) {
+		Set<Student> students = studentdao.getStudentsWithCurrentRole();
+		if (students == null) {
+			res.setStatus(400);
+			return null;
+		} else {
+			res.setStatus(200);
+			return students;
+		}
+	}
 }
