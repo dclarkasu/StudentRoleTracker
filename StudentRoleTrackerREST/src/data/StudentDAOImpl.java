@@ -90,11 +90,18 @@ public class StudentDAOImpl implements StudentDAO {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			Role mappedRole = mapper.readValue(roleJSON, Role.class);
-
 			Student stud = em.find(Student.class, id);
+			//
+			List<Role> roles = stud.getRoles();
+			for (Role role : roles) {
+				if (role.isCurrent() == true) {
+					role.setCurrent(false); //Need to set current/previous role to false
+				}
+			}
 			mappedRole.setStudent(stud);
 
-			em.persist(mappedRole);
+			mappedRole.setCurrent(true);
+			em.persist(mappedRole);//Still needs to be tested
 			em.flush();
 			return mappedRole;
 		} catch (Exception e) {
@@ -137,68 +144,64 @@ public class StudentDAOImpl implements StudentDAO {
 
 	@Override
 	public boolean destroyRole(int studentID, int roleID) {
-		Role role = em.find(Role.class, roleID);
-		if (role.getStudent().getId() == studentID) {
-			em.remove(role);
-			System.out.println("******************************************************");
-			System.out.println("In Destroy Role True");
+		String query = "DELETE FROM Role WHERE id = :id";
+		int result = em.createQuery(query).setParameter("id", roleID).executeUpdate();
+		System.out.println("******************************************************");
+		System.out.println(result);
+		if (result > 0) {
 			return true;
 		} else {
 			return false;
 		}
+//		Role role = em.find(Role.class, roleID);
+//		if (role.getStudent().getId() == studentID) {
+//			em.remove(role);
+//			System.out.println("In Destroy Role True");
+//			return true;
+//		} else {
+//			return false;
+//		}
 	}
 	
-	Set assignedStudents = new HashSet<Student>();
 	@Override
 	public Set<Student> getStudentsWithCurrentRole() {
-		String query = "SELECT DISTINCT r.id FROM Role r WHERE r.isCurrent = true";
-		List<Integer> ids = em.createQuery(query).getResultList();
+		// SELECT r.student FROM Role r WHERE r.isCurrent = true;
+		String query = "SELECT r.student FROM Role r WHERE r.isCurrent = true";
+		List<Student> students = em.createQuery(query, Student.class).getResultList();
 		System.out.println("*******************************************************");
-		System.out.println(ids);
-		
-		String query2 = "SELECT s FROM Student s";
-		List<Student> studs = em.createQuery(query2, Student.class).getResultList();
-		System.out.println("********************************************");
-		System.out.println(studs);
-		Student s = new Student();
-		
-		
-//		StudentDAOImpl studDAOImpl = new StudentDAOImpl();
-//		List<Student> students = studDAOImpl.getAllStudents();
-		Role r;
-		
-		for (Integer id : ids) {
-			r = em.find(Role.class, id);
-			System.out.println("********************************************");
-			System.out.println(r);
-			for (int i = 0; i < studs.size(); i++) {
-				for (int j = 0; j < studs.get(i).getRoles().size(); j++) {
-					if (r.getId() == studs.get(i).getRoles().get(j).getId()) {
-						s = studs.get(i);
-						assignedStudents.add(s);
-					} else {
-						System.out.println("********************************************");
-						System.out.println("Student not added to isCurrent list");
-					}
-				}
-			}
-		}
-		return assignedStudents;
-		
-//		String query2 = "SELECT s FROM Student s JOIN FETCH Role r WHERE s.roles.r.id = ";
+		System.out.println(students);
+		return new HashSet<Student>(students);
 	}
-	
-	//SELECT DISTINCT r.id FROM ROLE r JOIN Student s WHERE s.roles.r.isCurrent = true";
-	
-	//SELECT DISTINCT r.id from ROLE r where r.isCurrent = true"
-	//store into List<Integer> ids
-	//create a new List<Student> students
-	
-	//for(Integer id: ids){
-	//Student s = em.find(Student.class, id);
-	//students.add(s);
-	//}
-	//return students
+		
+		//		String query2 = "SELECT s FROM Student s";
+//		List<Student> studs = em.createQuery(query2, Student.class).getResultList();
+//		System.out.println("********************************************");
+//		System.out.println(studs);
+//		Student s = new Student();
+//		
+//		
+////		StudentDAOImpl studDAOImpl = new StudentDAOImpl();
+////		List<Student> students = studDAOImpl.getAllStudents();
+//		Role r;
+//		
+//		for (Integer id : ids) {
+//			r = em.find(Role.class, id);
+//			System.out.println("********************************************");
+//			System.out.println(r);
+//			for (int i = 0; i < studs.size(); i++) {
+//				for (int j = 0; j < studs.get(i).getRoles().size(); j++) {
+//					if (r.getId() == studs.get(i).getRoles().get(j).getId()) {
+//						s = studs.get(i);
+//						assignedStudents.add(s);
+//					} else {
+//						System.out.println("********************************************");
+//						System.out.println("Student not added to isCurrent list");
+//					}
+//				}
+//			}
+//		}
+//		return assignedStudents;
+		
 	
 	//COULD create a list of all students and iterate over it chercking for those whose
 	// id's don't match the above list and making the non mathcers into another list
