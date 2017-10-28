@@ -52,6 +52,20 @@ angular.module('appModule').factory('studentService', function($http) {
 		})
 	};
 	
+	//Role requests
+	
+	service.createRole = function(sid, role) {
+
+		return $http ({
+			method : 'POST',
+			url : 'rest/students/'+sid+'/roles',
+			headers : {
+				'ContentType' : 'application/json'
+			},
+			data : role
+		})
+	};
+	
 	service.destroyRole = function(sid, rid) {
 		return $http ({
 			method : 'DELETE',

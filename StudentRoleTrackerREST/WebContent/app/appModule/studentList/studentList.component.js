@@ -72,6 +72,8 @@ angular.module('appModule').component('studentList', {
 				vm.displayFullTable();
 			})
 		}
+		//Role Behaviors
+		
 		//Refreshes role list for a student
 		vm.reloadRoles = function(student) {
 			console.log(student.id);
@@ -82,6 +84,21 @@ angular.module('appModule').component('studentList', {
 				vm.displayStudent(student);
 			})
 		}
+		
+		vm.setNewRole = function() {
+			vm.newRole = {};
+		}
+		
+		vm.addRole = function(sid, role) {
+			studentService.createRole(sid, role)
+			.then(function(res) {
+				console.log(role);
+				vm.selected.roles.push(res.data);
+				vm.getAllStudents();
+				vm.displayStudent(vm.selected);
+			})
+		}
+		
 		//Deletes role by student id and role id
 		vm.deleteRole = function(student, rid) {
 			console.log(student.id, rid);
@@ -89,8 +106,8 @@ angular.module('appModule').component('studentList', {
 			studentService.destroyRole(student.id, rid)
 			.then(function(res){
 				vm.getAllStudents();
-				vm.reloadRoles(student);
-//				vm.displayStudent(student);
+				vm.reloadRoles(vm.selected);
+//				vm.displayStudent(vm.selected);
 			})
 		}
 	},

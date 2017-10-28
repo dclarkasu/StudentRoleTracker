@@ -33,6 +33,17 @@
 		<h1>Grade: {{vm.selected.grade}}</h1>
 		<button class="btn" type="submit" ng-click="vm.setEditStudent()">Edit Student</button>
 		<button class="btn" ng-click="vm.deleteStudent(vm.selected.id)">Delete Student</button>
+		<!-- Add New Role div -->
+		<div>
+			<button class="btn" type="submit" ng-show="vm.selected" ng-click="vm.setNewRole()">Add Role</button>
+			<!-- Add new role form -->
+			<div>
+				<form class="form-control" ng-show="vm.newRole && !vm.studentToEdit && vm.selected">
+					<input type="text" placeholder="Role Name" ng-model="role.name"/>
+					<input type="text" placeholder="Description" ng-model="role.description"/>
+					<button class="btn" type="submit" ng-click="vm.addRole(vm.selected.id, role); role = {}">Add</button>
+				</form>
+		</div>
 		<!-- inner div displaying table with list of roles per student -->
 		<div id="roleDiv">
 			<table class="table">
@@ -68,55 +79,4 @@
 		</form>
 	</div>
 </div>
-	<!-- <form class="form-control" ng-hide="vm.selected">
-	ng-model stores the values entered in the form in an object
-	which needs the same properties as the obj array it's being added to
-		<input type="text" placeholder="Task" ng-model="todo.task"/>
-		<input type="submit" value="Add" ng-click="vm.addTodo(todo); todo = {}"/>
-		click behavior added to submit btn and calls function sending it
-	 the obj it's been building. ; separates expression sets form's obj to {} to clear the form
-	</form>
-	Shows if vm.selected has a value and editTodo does not
-	<div id="detailView" ng-show="vm.selected && !vm.editTodo">
-		<h4>Title: {{vm.selected.task}}</h4>
-		<h4>Description: {{vm.selected.description}}</h4>
-		<h4>Completion: {{vm.selected.completed}}</h4>
-		
-		<button type="submit" ng-click="vm.setEditTodo()">Edit Todo</button>
-	</div>
-	Hide the table if a todo is selected
-	<table class="table" ng-hide="vm.selected">
-		<thead class="thead-dark">
-			<th>Task</th>
-			<th>Mark</th>
-			<th>Completed</th>
-			<th>Delete</th>
-		</thead>
-		<tbody>
-		ng-repeat on the element you want repeated
-		Everything in this form must use the same var name as in the repeat loop
-			<tr ng-repeat="todo in vm.todos | incomplete:vm.showComplete | orderBy:'id'">
-				<td><button class="btn" type="submit" value="View" ng-click="vm.displayTodo(todo)" ng-class="vm.checkTaskCompletion(todo)"/> {{todo.task}} </td>
-				2 way data binding to boolean value using ng-change to relay change to DB
-				<td><input type="checkbox" ng-model="todo.completed" ng-change="vm.updateTodo(todo)"/></td>
-				displaying the changes to that 2 way relationship in the view
-				<td>{{todo.completed}}</td>
-				<td><button class="btn" ng-click="vm.deleteTodo(todo.id)">X</button></td>
-			</tr>
-		</tbody>
-		<tfoot>
-			<tr><td>Show All Tasks: <input type="checkbox" ng-model="vm.showComplete"/></td></tr>
-		</tfoot>
-	</table>
 	
-	Shows when editTodo has a value (created by setEditTodo)
-	<form class="form-control" ng-show="vm.editTodo">
-		<input type="text" placeholder="Task Name" ng-model="vm.editTodo.task"/>
-		<input type="text" placeholder="Description" ng-model="vm.editTodo.description"/>
-		Completion : <input type="checkbox" ng-model="vm.editTodo.completed"/> {{vm.editTodo.completed}}<br />
-		<button type="submit" ng-click="vm.updateTodo(vm.editTodo)">Save</button>
-		<button type="submit" ng-click="vm.cancel(vm.editTodo)">Cancel</button>
-	</form>
-	
-	<button type="submit" ng-click="vm.displayTable()" ng-show="vm.selected ">Return to List</button>
-</div> -->
