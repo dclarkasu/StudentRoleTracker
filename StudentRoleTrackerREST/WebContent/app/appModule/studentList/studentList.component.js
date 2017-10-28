@@ -16,9 +16,10 @@ angular.module('appModule').component('studentList', {
 				vm.students = res.data;
 			})
 		}
-		
+		//Gets full student list initially
 		vm.getAllStudents();
 		
+		//Keeps current student count
 		vm.studentCount = function() {
 			return vm.students.length;
 //			return $filter('incomplete')(vm.todos).length;
@@ -48,6 +49,28 @@ angular.module('appModule').component('studentList', {
 		
 		vm.setEditStudent = function() {
 			vm.studentToEdit = angular.copy(vm.selected);
+		}
+		
+		vm.updateStudent = function(student) {
+			studentService.update(student.id, student)
+			.then(function(res){
+				vm.getAllStudents();
+				vm.displayFullTable();
+			})
+		}
+		
+		vm.cancel = function(student) {
+			vm.displayStudent(student);
+			vm.studentToEdit = null;
+		}
+		
+		vm.deleteStudent = function(id) {
+			console.log(id);
+			studentService.destroy(id)
+			.then(function(res){
+				vm.getAllStudents();
+				vm.displayFullTable();
+			})
 		}
 	},
 	controllerAs : 'vm'

@@ -37,7 +37,7 @@ angular.module('appModule').factory('studentService', function($http) {
 //		}
 		return $http({
 		      method : 'PUT',
-		      url : 'rest/students' + id,
+		      url : 'rest/students/' + id,
 		      headers : {
 		        'Content-Type' : 'application/json'
 		      },
@@ -48,7 +48,7 @@ angular.module('appModule').factory('studentService', function($http) {
 	service.destroy = function(id) {
 		return $http ({
 			method : 'DELETE',
-			url : 'rest/students' + id
+			url : 'rest/students/' + id
 		})
 	};
 	//Must always return the object created first in the service
