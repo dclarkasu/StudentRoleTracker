@@ -24,6 +24,10 @@ angular.module('appModule').component('studentList', {
 //			return $filter('incomplete')(vm.todos).length;
 		}
 		
+		vm.setNewStudent = function() {
+			vm.newStudent = {};
+		}
+		
 		vm.addStudent = function(stud) {
 			studentService.create(stud)
 			.then(function(res) {
@@ -39,6 +43,11 @@ angular.module('appModule').component('studentList', {
 		
 		vm.displayFullTable = function() {
 			vm.selected = null;
+			vm.studentToEdit = null;
+		}
+		
+		vm.setEditStudent = function() {
+			vm.studentToEdit = angular.copy(vm.selected);
 		}
 	},
 	controllerAs : 'vm'

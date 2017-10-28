@@ -1,6 +1,15 @@
 <div class="container">
 	<!-- Header and binding notation calling function within vm component -->
 	<h3 ng-hide="vm.selected">Current Students : <span>{{vm.studentCount()}}</span></h3>
+		<span><button class="btn" id="newStudentBtn" type="submit" ng-show="!vm.selected" ng-click="vm.setNewStudent()">Add Student</button></span>
+	<div>
+		<form class="form-control" ng-show="vm.newStudent">
+			<input type="text" placeholder="First Name" ng-model="student.firstName"/>
+			<input type="text" placeholder="Last Name" ng-model="student.lastName"/>
+			<input type="text" placeholder="Grade" ng-model="student.grade"/>
+			<button class="btn" type="submit" ng-click="vm.addStudent(student); student = {}">Add</button>
+		</form>
+	</div>
 	
 	<div>
 		<table class="table" ng-hide="vm.selected">
@@ -16,12 +25,18 @@
 			</tbody>
 		</table>
 	</div>
-	
-	<div class="jumbotron" ng-show="vm.selected">
+	<!-- Individual student view -->
+	<div class="jumbotron" ng-show="vm.selected && !vm.studentToEdit">
 		<h1>Name: {{vm.selected.firstName}} {{vm.selected.lastName}} </h1>
 		<h1>Grade: {{vm.selected.grade}}</h1>
+		<button class="btn" type="submit" ng-click="vm.setEditStudent()">Edit Student</button>
 	</div>
 	<button class="btn" type="submit" ng-click="vm.displayFullTable()" ng-show="vm.selected ">Return to List</button>
+	
+	<form class="form-control" ng-show="vm.studentToEdit">
+		<input type="text" placeholder="First Name" ng-model="vm.studentToEdit.firstName"/>
+		<input type="text" placeholder="Last Name" ng-model="vm.studentToEdit.lastName"/>
+	</form>
 </div>
 	<!-- <form class="form-control" ng-hide="vm.selected">
 	ng-model stores the values entered in the form in an object
