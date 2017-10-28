@@ -72,6 +72,27 @@ angular.module('appModule').component('studentList', {
 				vm.displayFullTable();
 			})
 		}
+		//Refreshes role list for a student
+		vm.reloadRoles = function(student) {
+			console.log(student.id);
+			
+			studentService.indexRoles(student.id)
+			.then(function(res) {
+				console.log(res.data);
+				vm.displayStudent(student);
+			})
+		}
+		//Deletes role by student id and role id
+		vm.deleteRole = function(student, rid) {
+			console.log(student.id, rid);
+			
+			studentService.destroyRole(student.id, rid)
+			.then(function(res){
+				vm.getAllStudents();
+				vm.reloadRoles(student);
+//				vm.displayStudent(student);
+			})
+		}
 	},
 	controllerAs : 'vm'
 });

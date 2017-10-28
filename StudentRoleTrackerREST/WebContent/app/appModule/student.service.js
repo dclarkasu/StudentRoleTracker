@@ -51,6 +51,20 @@ angular.module('appModule').factory('studentService', function($http) {
 			url : 'rest/students/' + id
 		})
 	};
+	
+	service.destroyRole = function(sid, rid) {
+		return $http ({
+			method : 'DELETE',
+			url : 'rest/students/'+sid+'/roles/'+rid
+		})
+	}
+	
+	service.indexRoles = function(id) {
+		return $http ({
+			method : 'GET',
+			url : 'rest/students/'+id+'/roles'
+		});
+	}
 	//Must always return the object created first in the service
 	
 	return service;

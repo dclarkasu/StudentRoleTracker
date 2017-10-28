@@ -13,3 +13,11 @@ button:hover {
 #newStudentBtn {
 	margin-right: 2cm;
 }
+
+#deleteBtn {
+	background-color: red;
+}
+
+#roleDiv {
+	padding-top : 10px;
+}

@@ -33,6 +33,27 @@
 		<h1>Grade: {{vm.selected.grade}}</h1>
 		<button class="btn" type="submit" ng-click="vm.setEditStudent()">Edit Student</button>
 		<button class="btn" ng-click="vm.deleteStudent(vm.selected.id)">Delete Student</button>
+		<!-- inner div displaying table with list of roles per student -->
+		<div id="roleDiv">
+			<table class="table">
+				<thead class="thead-dark">
+					<th>Role Name</th>
+					<th>Description</th>
+					<th>Currently Assigned</th>
+					<th></th>
+					<th></th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="role in vm.selected.roles">
+						<td>{{role.name}}</td>
+						<td>{{role.description}}</td>
+						<td>{{role.current}}</td>
+						<td><button class="btn" type="submit" ng-click="">Edit</button></td>
+						<td><button class="btn" id="deleteBtn" ng-click="vm.deleteRole(vm.selected, role.id)">X</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 	<button class="btn" type="submit" ng-click="vm.displayFullTable()" ng-show="vm.selected ">Return to List</button>
 	
