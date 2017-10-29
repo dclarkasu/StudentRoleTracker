@@ -13,7 +13,7 @@
 	</div>
 	
 	<!-- Displays all students -->
-	<div>
+	<div id="displayAllDiv">
 		<table class="table" ng-hide="vm.selected">
 			<thead class="thead-dark">
 				<th>First Name</th>
@@ -50,12 +50,12 @@
 		<h1>Name: {{vm.selected.firstName}} {{vm.selected.lastName}} </h1>
 		<h1>Grade: {{vm.selected.grade}}</h1>
 		<button class="btn" type="submit" ng-click="vm.setEditStudent()">Edit Student</button>
-		<button class="btn" ng-click="vm.deleteStudent(vm.selected.id)">Delete Student</button>
+		<button class="btn btn-outline-danger" ng-click="vm.deleteStudent(vm.selected.id)">Delete Student</button>
 		<!-- Add New Role div -->
 		<div>
-			<button class="btn" id="addRoleBtn" type="submit" ng-show="vm.selected" ng-click="vm.setNewRole()">Add Role</button>
 			<!-- Add new role form -->
-		<div>
+		<div id="addRoleDiv">
+			<button class="btn" id="addRoleBtn" type="submit" ng-show="vm.selected" ng-click="vm.setNewRole()">Add Role</button>
 			<form class="form-control" ng-show="vm.newRole && !vm.studentToEdit && vm.selected">
 				<input type="text" placeholder="Role Name" ng-model="role.name"/>
 				<input type="text" placeholder="Description" ng-model="role.description"/>

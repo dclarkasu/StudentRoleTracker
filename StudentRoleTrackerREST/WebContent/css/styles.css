@@ -22,6 +22,10 @@ button:hover {
 	padding-top : 15px;
 }
 
-#addRoleBtn {
-	/* padding-top : 15px; */
+#addRoleDiv {
+	padding-top : 15px;
+}
+
+#displayAllDiv {
+	padding-top : 15px;
 }
