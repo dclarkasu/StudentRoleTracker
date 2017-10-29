@@ -52,6 +52,13 @@ angular.module('appModule').factory('studentService', function($http) {
 		})
 	};
 	
+	service.indexAssignedStudents = function() {
+		return $http ({
+			method : 'GET',
+			url : 'rest/students/roles'
+		})
+	}
+	
 	//Role requests
 	
 	service.createRole = function(sid, role) {
@@ -64,6 +71,24 @@ angular.module('appModule').factory('studentService', function($http) {
 			},
 			data : role
 		})
+	};
+	
+	service.updateRole = function(sid, rid, role) {
+//		Sets completed Date property to current date/time before sending request to DB
+//		if (todo.completed === true) {
+//			todo.completeDate = $filter('date')(Date.now(), 'MM/dd/yyyy');
+//		} else {
+//			todo.completeDate = "";
+//		}
+		console.log("sid: " +sid + "rid: " + rid + "role: " + role)
+		return $http({
+		      method : 'PUT',
+		      url : 'rest/students/'+ sid +'/roles/'+rid,
+		      headers : {
+		        'Content-Type' : 'application/json'
+		      },
+		      data : role
+		    })
 	};
 	
 	service.destroyRole = function(sid, rid) {

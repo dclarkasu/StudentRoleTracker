@@ -7,6 +7,8 @@ angular.module('appModule').component('studentList', {
 		
 		vm.selected = null;
 		
+		vm.assignedStudents = [];
+		
 		//Behaviors
 		vm.getAllStudents = function() {
 			//returns response object containing data
@@ -45,13 +47,16 @@ angular.module('appModule').component('studentList', {
 		vm.displayFullTable = function() {
 			vm.selected = null;
 			vm.studentToEdit = null;
+			vm.roleToEdit = null;
 		}
 		
 		vm.setEditStudent = function() {
 			vm.studentToEdit = angular.copy(vm.selected);
+			vm.roleToEdit = null;
 		}
 		
 		vm.updateStudent = function(student) {
+			console.log(student);
 			studentService.update(student.id, student)
 			.then(function(res){
 				vm.getAllStudents();
@@ -72,6 +77,19 @@ angular.module('appModule').component('studentList', {
 				vm.displayFullTable();
 			})
 		}
+		
+		vm.getAssignedStudents = function() {
+			studentService.indexAssignedStudents()
+			.then(function(res) {
+				vm.assignedStudents = res.data;
+				console.log(vm.assignedStudents);
+			})
+		}
+		
+		vm.hideAssigned = function() {
+			vm.assignedStudents = [];
+		}
+		
 		//Role Behaviors
 		
 		//Refreshes role list for a student
@@ -95,6 +113,21 @@ angular.module('appModule').component('studentList', {
 				console.log(role);
 				vm.selected.roles.push(res.data);
 				vm.getAllStudents();
+				vm.displayStudent(vm.selected);
+			})
+		}
+		
+		vm.setEditRole = function(role) {
+			vm.roleToEdit = angular.copy(role);
+		}
+		
+		vm.updateRole = function(student, role) {
+			console.log('In updateRole component.js');
+			console.log('student fName: ' + student.firstName + " role name: " + role.name);
+			studentService.updateRole(student.id, role.id, role)
+			.then(function(res){
+				vm.getAllStudents();
+//				vm.reloadRoles(vm.selected);
 				vm.displayStudent(vm.selected);
 			})
 		}

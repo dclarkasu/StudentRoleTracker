@@ -4,11 +4,11 @@
 		<span><button class="btn" id="newStudentBtn" type="submit" ng-show="!vm.selected" ng-click="vm.setNewStudent()">Add Student</button></span>
 	<!-- Add new student form -->
 	<div>
-		<form class="form-control" ng-show="vm.newStudent && !vm.studentToEdit">
+		<form class="form-control" ng-show="vm.newStudent && !vm.studentToEdit && !vm.selected">
 			<input type="text" placeholder="First Name" ng-model="student.firstName"/>
 			<input type="text" placeholder="Last Name" ng-model="student.lastName"/>
 			<input type="text" placeholder="Grade" ng-model="student.grade"/>
-			<button class="btn" type="submit" ng-click="vm.addStudent(student); student = {}">Add</button>
+			<button class="btn btn-success" type="submit" ng-click="vm.addStudent(student); student = {}">Add</button>
 		</form>
 	</div>
 	
@@ -21,29 +21,48 @@
 				<th>View</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="student in vm.students">
+				<tr ng-repeat="student in vm.students | orderBy:'id'">
 					<td>{{student.firstName}}</td><td>{{student.lastName}}</td>
 					<td><button class="btn" type="submit" ng-click="vm.displayStudent(student)">View</button></td>
 			</tbody>
 		</table>
+		<button class="btn btn-info" type="submit" ng-hide="vm.selected || vm.studentToEdit" ng-click="vm.getAssignedStudents()">Active Assignments</button>
+		
+		<!-- Currently Assigned Students Display -->
+	<div ng-show="vm.assignedStudents.length > 0 && !vm.selected && !vm.studentToEdit">
+		<table class="table table-striped">
+			<tbody>
+				<tr ng-repeat="student in vm.assignedStudents | orderBy:'id'">
+					<td>{{student.firstName}}</td><td>{{student.lastName}}</td>
+				</tr>
+				<tfoot>
+					<tr>
+						<td><button class="btn" ng-show="vm.assignedStudents.length > 0 && !vm.selected && !vm.studentToEdit" type="submit" ng-click="vm.hideAssigned()">Hide</button></td>
+					</tr>
+				</tfoot>		
+			</tbody>
+		</table>
+	</div>
+		
 	</div>
 	<!-- Individual student view -->
-	<div class="jumbotron" ng-show="vm.selected && !vm.studentToEdit">
+	<div class="jumbotron" ng-show="vm.selected"> <!-- && !vm.studentToEdit -->
 		<h1>Name: {{vm.selected.firstName}} {{vm.selected.lastName}} </h1>
 		<h1>Grade: {{vm.selected.grade}}</h1>
 		<button class="btn" type="submit" ng-click="vm.setEditStudent()">Edit Student</button>
 		<button class="btn" ng-click="vm.deleteStudent(vm.selected.id)">Delete Student</button>
 		<!-- Add New Role div -->
 		<div>
-			<button class="btn" type="submit" ng-show="vm.selected" ng-click="vm.setNewRole()">Add Role</button>
+			<button class="btn" id="addRoleBtn" type="submit" ng-show="vm.selected" ng-click="vm.setNewRole()">Add Role</button>
 			<!-- Add new role form -->
-			<div>
-				<form class="form-control" ng-show="vm.newRole && !vm.studentToEdit && vm.selected">
-					<input type="text" placeholder="Role Name" ng-model="role.name"/>
-					<input type="text" placeholder="Description" ng-model="role.description"/>
-					<button class="btn" type="submit" ng-click="vm.addRole(vm.selected.id, role); role = {}">Add</button>
-				</form>
+		<div>
+			<form class="form-control" ng-show="vm.newRole && !vm.studentToEdit && vm.selected">
+				<input type="text" placeholder="Role Name" ng-model="role.name"/>
+				<input type="text" placeholder="Description" ng-model="role.description"/>
+				<button class="btn btn-success" type="submit" ng-click="vm.addRole(vm.selected.id, role); role = {}">Add</button>
+			</form>
 		</div>
+	</div>
 		<!-- inner div displaying table with list of roles per student -->
 		<div id="roleDiv">
 			<table class="table">
@@ -59,18 +78,18 @@
 						<td>{{role.name}}</td>
 						<td>{{role.description}}</td>
 						<td>{{role.current}}</td>
-						<td><button class="btn" type="submit" ng-click="">Edit</button></td>
+						<td><button class="btn" type="submit" ng-click="vm.setEditRole(role)">Edit</button></td>
 						<td><button class="btn" id="deleteBtn" ng-click="vm.deleteRole(vm.selected, role.id)">X</button></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
-	<button class="btn" type="submit" ng-click="vm.displayFullTable()" ng-show="vm.selected ">Return to List</button>
+	<button class="btn btn-dark" type="submit" ng-click="vm.displayFullTable()" ng-show="vm.selected ">Return to List</button>
 	
 	<!-- Edit Student Form -->
 	<div>
-		<form class="form-control" ng-show="vm.studentToEdit">
+		<form class="form-control" ng-show="vm.studentToEdit"> <!-- && !vm.roleToEdit -->
 			<input type="text" placeholder="First Name" ng-model="vm.studentToEdit.firstName"/>
 			<input type="text" placeholder="Last Name" ng-model="vm.studentToEdit.lastName"/>
 			<input type="text" placeholder="Grade" ng-model="vm.studentToEdit.grade"/>
@@ -78,5 +97,16 @@
 			<button class="btn" type="submit" ng-click="vm.cancel(vm.studentToEdit)">Cancel</button>
 		</form>
 	</div>
+	<!-- Edit Role Form -->
+	<div>
+		<form class="form-control" ng-show="vm.roleToEdit">
+			<input type="text" placeholder="Role Name" ng-model="vm.roleToEdit.name"/>
+			<input type="text" placeholder="Description" ng-model="vm.roleToEdit.description"/>
+			<button class="btn" type="submit" ng-click="vm.updateRole(vm.selected, vm.roleToEdit)">Save</button>
+			<!-- <button class="btn" type="submit" ng-click="vm.cancel(vm.studentToEdit)">Cancel</button> -->
+		</form>
+	</div>
+	
+	
 </div>
 	

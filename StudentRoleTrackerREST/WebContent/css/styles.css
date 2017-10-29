@@ -19,5 +19,9 @@ button:hover {
 }
 
 #roleDiv {
-	padding-top : 10px;
+	padding-top : 15px;
+}
+
+#addRoleBtn {
+	/* padding-top : 15px; */
 }
