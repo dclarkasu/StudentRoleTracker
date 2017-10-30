@@ -26,7 +26,7 @@ public class Student {
 	
 	//Eager Fetch prevents lazy loading
 	@JsonManagedReference(value="studentToRole")
-	@OneToMany(mappedBy = "student", fetch=FetchType.EAGER, cascade= {CascadeType.PERSIST, CascadeType.REMOVE})
+	@OneToMany(mappedBy = "student", fetch=FetchType.EAGER, cascade= {CascadeType.REMOVE})
 	private List<Role> roles;
 
 	public String getFirstName() {

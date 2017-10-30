@@ -118,24 +118,29 @@ public class StudentDAOImpl implements StudentDAO {
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			
+			//mappedRole represents the new data passed in
 			Role mappedRole = mapper.readValue(roleJSON, Role.class);
 			String query = "Select r FROM Role r WHERE r.name = '" + mappedRole.getName() + "'";
 			try {
 				String studentQuery = "Select r FROM Role r WHERE r.name = '" + mappedRole.getName() + "' and r.isCurrent = true";
+				//Role is the role pulled from the db to basically be copied but with new info
 				Role role = em.createQuery(studentQuery, Role.class).getSingleResult();
 				mappedRole.setStudent(role.getStudent());
 				role.setCurrent(false);
-				em.merge(role);
+				
+				//Update just needs setters normally but we'll persist r because it's technically a new obj
+				Role r = new Role();
+				r.setName(role.getName());
+				r.setDescription(mappedRole.getDescription());
+				r.setStudent(mappedRole.getStudent());
+				r.setCurrent(true);
+				em.persist(r);
 				em.flush();
+				return r;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			mappedRole.setCurrent(true);
-			em.persist(mappedRole);
-			em.flush();
-			return mappedRole;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
